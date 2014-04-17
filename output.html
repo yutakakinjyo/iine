@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0.1//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" Content="text/html;charset=UTF-8">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Expires" content="Thu, 01 Dec 1994 16:00:00 GMT">
+<script type="text/javascript" src="jquery-1.5.1.js" charset="UTF-8"></script>
+
+<title>(・∀・)ｲｲﾈ!!</title>
+
+
+<script type="text/javascript">
+<!--
+var xmlHttp;
+var count = 0;
+var index = 0;
+var limit_value = 0.0;
+const load_time = 250;
+const max = 60;
+
+function sound(name){
+var str = "";
+str = str + "<EMBED id = 'id_sound'";
+str = str + " SRC='" + name + "'";
+str = str + " AUTOSTART='true'";
+str = str + " HIDDEN='true'>";
+document.write(str);
+}
+
+function loadText(){
+
+   if (limit_value > max) {
+       limit_value = 0;
+       limit();
+       return 0;
+   }
+
+
+  if (window.XMLHttpRequest){
+    xmlHttp = new XMLHttpRequest();
+  }else{
+    if (window.ActiveXObject){
+      xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }else{
+      xmlHttp = null;
+    }
+  }
+
+    xmlHttp.onreadystatechange = checkStatus;
+    xmlHttp.open("GET", "http://capybara.cr.ie.u-ryukyu.ac.jp/log.txt", true);
+    xmlHttp.setRequestHeader("If-Modified-Since", "Thu, 01 Jun 1970 00:00:00 GMT");
+    xmlHttp.send(null);
+
+    var minus_val = 3*(load_time / 1000);
+
+    if (limit_value > 0) {
+       limit_value -= minus_val;
+    }
+
+
+    return 0;
+
+}
+
+function checkStatus(){
+
+  if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
+
+   setTimeout("loadText()",load_time);
+
+   var diff = xmlHttp.responseText - count;       
+   if (diff > 0) {
+      limit_value += diff;
+      count = xmlHttp.responseText;
+      set_image(diff);
+      diff = 0;
+    }
+  }
+
+
+}
+
+function limit() {
+  var show_wait = 3100;
+  sound('iyopon.mp3');
+  setTimeout("display_image()",show_wait);
+}
+
+function display_image() {
+
+ var show_time = 12000;
+
+ str ="<div id='sugoku'><img src='sugoku_03.png' width='100%'></div>";
+ document.write(str);
+ setTimeout("$('#sugoku').remove()", show_time);
+ setTimeout("$('id_sound').remove()", show_time);
+ setTimeout("initload()", show_time);
+}
+
+function set_image(diff) {
+
+  Imgset="./ine.png"; //画像
+  var range = 45;
+
+  doc_width = innerWidth-400;
+  doc_height= innerHeight-150;
+
+  if (index > 100) {
+      index = 0;
+  }
+
+  for (i=0; i < diff; i++){ 
+
+    xpx = Math.floor(doc_width*Math.random()); 
+    ypx = Math.floor(doc_height*Math.random());
+    size = 100 - Math.floor(range*Math.random());
+
+    addimage ="<div style='position:absolute;left:"+ xpx +"px;top:"+ ypx +"px;display:none;'  id="+index+"><img src='"+Imgset+"' width="+size+"%></div>";
+
+    document.write(addimage);    
+    start(index);
+
+    index = index + 1;
+
+  }
+
+}
+
+function start(id) {
+var obj = "#"+id;
+$(obj).show("slow");
+setTimeout("end("+id+")",2000);
+}
+
+function end(id) {
+var obj = "#"+id;
+$(obj).hide("fast");
+setTimeout("removeObj("+obj+")",2000);
+}
+
+function removeObj(id) {
+var obj = "#"+id;
+$(obj).remove();
+}
+
+function initload() {
+
+  if (window.XMLHttpRequest){
+    xmlHttp = new XMLHttpRequest();
+  }else{
+    if (window.ActiveXObject){
+      xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }else{
+      xmlHttp = null;
+    }
+  }
+    xmlHttp.onreadystatechange = checkInit;
+    xmlHttp.open("GET", "http://capybara.cr.ie.u-ryukyu.ac.jp/log.txt", true);
+    xmlHttp.setRequestHeader("If-Modified-Since", "Thu, 01 Jun 1970 00:00:00 GMT");
+    xmlHttp.send(null);
+
+}
+
+function checkInit(){
+
+  if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
+    count = xmlHttp.responseText;
+    loadText();
+  }
+
+}
+
+function inner() {
+
+initload();
+
+}
+
+
+-->
+</script>
+
+</head>
+<body>
+
+<script type="text/javascript">
+<!--
+inner();
+-->
+
+</script>
+
+
+</body>
+</html>
